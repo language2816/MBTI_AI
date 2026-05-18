@@ -13,534 +13,60 @@
   --blood:#8b1a1a;--crimson:#c0392b;--scarlet:#e74c3c;--ember:#ff6b35;
   --bone:#d4c9b8;--pale:#c8b8b0;--ash:#9a8a7a;--dust:#6a5a4a;
   --glow-red:rgba(192,57,43,.4);--glow-dim:rgba(140,20,20,.2);
-  --horror-red:#cc0000;--horror-dark:#1a0000;
 }
-
-/* ── Scanline + film grain overlay ── */
-body{
-  background:var(--void);
-  color:var(--bone);
-  font-family:'Noto Serif TC',Georgia,serif;
-  min-height:100vh;
-  overflow-x:hidden;
-  cursor:crosshair;
-}
-body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);
-  animation:scanMove 8s linear infinite;
-}
-@keyframes scanMove{from{background-position:0 0}to{background-position:0 200px}}
-body::after{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:998;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
-  opacity:.8;
-}
-
-/* ── Blood vignette ── */
-.vignette{position:fixed;inset:0;pointer-events:none;z-index:997;
-  background:radial-gradient(ellipse at center,transparent 0%,rgba(20,0,0,.3) 100%);
-}
-
-/* ── Ambient blood veins ── */
-.veins{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
-.vein{
-  position:absolute;border-radius:9999px;
-  background:linear-gradient(var(--blood),transparent);
-  opacity:0;animation:veinPulse var(--d,8s) ease-in-out infinite var(--delay,0s);
-  box-shadow:0 0 8px var(--crimson);
-}
-@keyframes veinPulse{0%,100%{opacity:0}50%{opacity:.18}}
-
-/* ── Floating particles ── */
-.particles{position:fixed;inset:0;pointer-events:none;z-index:2;}
-.particle{
-  position:absolute;border-radius:50%;
-  background:radial-gradient(circle,var(--scarlet),transparent);
-  animation:particleDrift var(--pd,10s) ease-in-out infinite var(--pdelay,0s);
-  box-shadow:0 0 20px var(--crimson),0 0 40px rgba(200,57,43,.2);
-}
-@keyframes particleDrift{
-  0%,100%{transform:translateY(0) scale(1);opacity:0}
-  50%{transform:translateY(-80px) scale(1.4);opacity:.2}
-}
-
-/* ── Blood drip corners ── */
-.drip-corner{position:fixed;pointer-events:none;z-index:3;}
-.drip-corner.tl{top:0;left:0;}
-.drip-corner.tr{top:0;right:0;transform:scaleX(-1);}
-
-/* ── Horror distortion ── */
-.distort-zone{position:fixed;inset:0;pointer-events:none;z-index:5;opacity:0;}
-@keyframes distortPulse{
-  0%,100%{opacity:0;filter:none}
-  50%{opacity:0.02;filter:url(#distortion)}
-}
-
-/* ── Main layout ── */
-.wrap{
-  position:relative;z-index:10;
-  max-width:700px;margin:0 auto;
-  padding:3rem 1.5rem 8rem;
-}
-
-/* ── Header ── */
+body{background:var(--void);color:var(--bone);font-family:'Noto Serif TC',Georgia,serif;min-height:100vh;overflow-x:hidden;cursor:crosshair;}
+.wrap{position:relative;z-index:10;max-width:700px;margin:0 auto;padding:3rem 1.5rem 8rem;}
 .site-header{text-align:center;margin-bottom:4rem;padding-top:1rem;}
-.horror-eye{
-  font-size:4rem;display:block;
-  margin:0 auto 1.2rem;
-  animation:eyeFloat 3.5s ease-in-out infinite, eyeTwitch 0.15s ease-in-out 0.5s infinite;
-  filter:drop-shadow(0 0 30px var(--horror-red)) drop-shadow(0 0 60px rgba(200,0,0,.3));
-}
-@keyframes eyeFloat{
-  0%,100%{transform:translateY(0) scale(1);}
-  50%{transform:translateY(-15px) scale(1.1);}
-}
-@keyframes eyeTwitch{
-  0%,100%{transform:skewX(0deg);}
-  50%{transform:skewX(1deg);}
-}
-.site-title{
-  font-family:'Cinzel',serif;
-  font-size:2.5rem;font-weight:700;
-  color:var(--bone);
-  letter-spacing:.15em;
-  line-height:1.3;
-  margin-bottom:.6rem;
-  text-shadow:0 0 60px var(--horror-red),0 0 30px rgba(200,0,0,.5),0 4px 8px rgba(0,0,0,.9);
-  animation:titleFlickerHeavy 5s ease-in-out infinite;
-  position:relative;
-}
-@keyframes titleFlickerHeavy{
-  0%,100%{opacity:1;text-shadow:0 0 60px var(--horror-red),0 0 30px rgba(200,0,0,.5),0 4px 8px rgba(0,0,0,.9)}
-  88%{opacity:1;text-shadow:0 0 60px var(--horror-red),0 0 30px rgba(200,0,0,.5),0 4px 8px rgba(0,0,0,.9)}
-  89%{opacity:.4;text-shadow:0 0 20px rgba(200,0,0,.3),0 2px 4px rgba(0,0,0,.8)}
-  91%{opacity:1;text-shadow:0 0 60px var(--horror-red),0 0 30px rgba(200,0,0,.5),0 4px 8px rgba(0,0,0,.9)}
-  93%{opacity:.3;text-shadow:0 0 40px var(--horror-red)}
-  95%{opacity:1;text-shadow:0 0 60px var(--horror-red),0 0 30px rgba(200,0,0,.5),0 4px 8px rgba(0,0,0,.9)}
-}
-.site-title em{color:var(--horror-red);font-style:normal;text-shadow:0 0 30px var(--horror-red),0 0 15px rgba(200,0,0,.6);}
-.site-sub{
-  font-family:'Crimson Text',serif;font-size:1.1rem;
-  color:#8a6a6a;letter-spacing:.12em;font-style:italic;
-  margin-top:.4rem;
-  text-shadow:0 0 10px rgba(200,0,0,.2);
-  animation:subFlicker 7s ease-in-out infinite;
-}
-@keyframes subFlicker{
-  0%,100%{opacity:0.8}
-  50%{opacity:1}
-}
-.title-line{
-  width:100px;height:2px;
-  background:linear-gradient(90deg,transparent,var(--horror-red),transparent);
-  margin:1.2rem auto;
-  box-shadow:0 0 15px var(--horror-red);
-}
-
-/* ── Landing page ── */
+.horror-eye{font-size:3.5rem;display:block;margin:0 auto 1.2rem;animation:eyeFloat 4s ease-in-out infinite;filter:drop-shadow(0 0 20px var(--crimson));}
+@keyframes eyeFloat{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-10px) scale(1.05);}}
+.site-title{font-family:'Cinzel',serif;font-size:2.2rem;font-weight:700;color:var(--bone);letter-spacing:.12em;line-height:1.3;margin-bottom:.6rem;text-shadow:0 0 40px var(--glow-red),0 2px 4px rgba(0,0,0,.8);}
+.site-title em{color:var(--scarlet);font-style:normal;text-shadow:0 0 20px var(--scarlet);}
+.site-sub{font-family:'Crimson Text',serif;font-size:1rem;color:var(--ash);letter-spacing:.1em;font-style:italic;margin-top:.4rem;}
+.title-line{width:80px;height:1px;background:linear-gradient(90deg,transparent,var(--blood),transparent);margin:1.2rem auto;}
 #landing{text-align:center;}
-.lore-box{
-  background:rgba(6,2,8,.95);
-  border:2px solid #3a0808;
-  border-radius:8px;
-  padding:2.5rem 2.5rem;
-  margin:2rem 0;
-  position:relative;
-  box-shadow:0 0 80px rgba(140,0,0,.25),inset 0 0 60px rgba(0,0,0,.5),0 0 40px var(--horror-red);
-  animation:lureMoves 8s ease-in-out infinite;
-}
-@keyframes lureMoves{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-5px)}
-}
-.lore-box::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--horror-red),transparent);
-  box-shadow:0 0 20px var(--horror-red);
-}
-.lore-box::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(200,0,0,.5),transparent);
-}
-.lore-text{
-  font-family:'Crimson Text',serif;font-size:1.2rem;
-  color:var(--pale);line-height:2.2;
-}
-.lore-text em{color:var(--horror-red);font-style:italic;text-shadow:0 0 15px var(--horror-red);}
-.warning-row{
-  display:flex;align-items:center;gap:1rem;justify-content:center;
-  font-size:.8rem;color:#7a5a5a;letter-spacing:.18em;margin-top:2rem;
-}
-.warning-dot{
-  width:8px;height:8px;border-radius:50%;
-  background:var(--horror-red);
-  animation:warnBlinkHeavy 1.2s ease-in-out infinite;
-  box-shadow:0 0 8px var(--horror-red);
-}
-@keyframes warnBlinkHeavy{0%,100%{opacity:.3;box-shadow:0 0 4px var(--horror-red)}50%{opacity:1;box-shadow:0 0 16px var(--horror-red),0 0 32px rgba(200,0,0,.3)}}
-.start-btn{
-  display:inline-block;
-  margin-top:3rem;
-  background:rgba(80,10,10,.15);
-  border:2px solid var(--horror-red);
-  border-radius:4px;
-  color:var(--bone);
-  font-family:'Cinzel',serif;
-  font-size:1rem;letter-spacing:.3em;
-  padding:1.2rem 3.5rem;
-  cursor:pointer;
-  position:relative;
-  overflow:hidden;
-  transition:all .4s;
-  text-shadow:0 0 15px rgba(200,0,0,.4);
-  box-shadow:0 0 20px var(--horror-red),inset 0 0 20px rgba(200,0,0,.1);
-}
-.start-btn::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,transparent 40%,rgba(200,26,26,.3));
-  transition:opacity .4s;
-}
-.start-btn::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--horror-red),transparent);
-  transform:scaleX(0);transition:transform .4s;
-  box-shadow:0 0 15px var(--horror-red);
-}
-.start-btn:hover{
-  border-color:var(--horror-red);
-  color:#fff;
-  box-shadow:0 0 50px var(--horror-red),0 0 80px rgba(200,0,0,.3),inset 0 0 30px rgba(200,0,0,.2);
-  text-shadow:0 0 25px var(--horror-red);
-  transform:scale(1.05);
-}
-.start-btn:hover::after{transform:scaleX(1);}
-.start-btn:active{
-  transform:scale(0.98);
-  box-shadow:0 0 30px var(--horror-red),0 0 60px rgba(200,0,0,.2);
-}
-
-/* ── Section / Step ── */
+.lore-box{background:rgba(10,4,8,.8);border:1px solid #1e0808;border-radius:8px;padding:2rem 2.2rem;margin:2rem 0;position:relative;box-shadow:0 0 60px rgba(80,0,0,.15),inset 0 0 40px rgba(0,0,0,.3);}
+.lore-text{font-family:'Crimson Text',serif;font-size:1.12rem;color:var(--pale);line-height:2;}
+.lore-text em{color:var(--scarlet);font-style:italic;}
+.warning-row{display:flex;align-items:center;gap:.8rem;justify-content:center;font-size:.72rem;color:var(--dust);letter-spacing:.15em;margin-top:1.5rem;}
+.warning-dot{width:6px;height:6px;border-radius:50%;background:var(--blood);animation:warnBlink 1.5s ease-in-out infinite;}
+@keyframes warnBlink{0%,100%{opacity:.4}50%{opacity:1;box-shadow:0 0 8px var(--crimson)}}
+.start-btn{display:inline-block;margin-top:2.5rem;background:transparent;border:1px solid var(--blood);border-radius:4px;color:var(--bone);font-family:'Cinzel',serif;font-size:.9rem;letter-spacing:.2em;padding:1rem 3rem;cursor:pointer;position:relative;overflow:hidden;transition:all .4s;}
+.start-btn:hover{border-color:var(--scarlet);color:#fff;box-shadow:0 0 30px var(--glow-red),0 0 60px rgba(100,0,0,.2);}
 .quiz-section{display:none;}
-.quiz-section.active{display:block;animation:fadeInDark .6s ease;}
-@keyframes fadeInDark{from{opacity:0;transform:translateY(20px);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
-
-/* ── Sticky topbar ── */
-.topbar{
-  display:none;position:sticky;top:0;z-index:100;
-  background:rgba(4,2,10,.98);border-bottom:2px solid #2a0808;
-  backdrop-filter:blur(15px);
-  padding:.9rem 1.5rem;margin:-3rem -1.5rem 2rem;
-  box-shadow:0 0 30px rgba(140,0,0,.2);
-}
-.topbar.visible{display:flex;animation:topbarSlide 0.4s ease;}
-@keyframes topbarSlide{from{transform:translateY(-100%)}to{transform:translateY(0)}}
-.topbar-inner{max-width:700px;margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between;}
-.topbar-home{
-  display:flex;align-items:center;gap:8px;
-  background:transparent;border:1px solid #3a0808;border-radius:4px;
-  color:#6a4a4a;font-family:'Noto Serif TC',serif;
-  font-size:.7rem;letter-spacing:.15em;padding:.5rem 1rem;cursor:pointer;transition:all .3s;
-}
-.topbar-home:hover{border-color:var(--horror-red);color:var(--horror-red);box-shadow:0 0 15px var(--horror-red);}
-.topbar-title{font-size:.65rem;color:#5a2a2a;letter-spacing:.18em;text-shadow:0 0 10px rgba(200,0,0,.2);}
-
-/* ── Progress ── */
-.step-lbl{font-size:.68rem;color:#5a2a2a;letter-spacing:.25em;text-align:center;margin-bottom:.6rem;font-family:'Cinzel',serif;text-transform:uppercase;text-shadow:0 0 10px rgba(200,0,0,.15);}
-.prog-bar{width:100%;height:3px;background:#0a0204;border-radius:2px;margin-bottom:2.5rem;overflow:hidden;box-shadow:inset 0 0 10px rgba(0,0,0,.8);}
-.prog-fill{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.34,.1,.68,.55);background:linear-gradient(90deg,#6a0a0a,var(--horror-red),var(--ember),#ff4500);box-shadow:0 0 15px var(--horror-red),inset 0 0 8px rgba(255,255,255,.1);}
-
-/* ── Question card ── */
-.qcard{
-  background:rgba(6,2,10,.9);
-  border:2px solid #2a0808;
-  border-radius:8px;
-  padding:3rem 2.5rem 2.5rem;
-  margin-bottom:2rem;
-  position:relative;overflow:hidden;
-  box-shadow:0 0 70px rgba(140,0,0,.2),inset 0 0 50px rgba(0,0,0,.6),0 0 30px var(--horror-red);
-  animation:cardPulse 6s ease-in-out infinite;
-}
-@keyframes cardPulse{
-  0%,100%{box-shadow:0 0 70px rgba(140,0,0,.2),inset 0 0 50px rgba(0,0,0,.6),0 0 30px var(--horror-red)}
-  50%{box-shadow:0 0 90px rgba(140,0,0,.35),inset 0 0 60px rgba(0,0,0,.5),0 0 50px var(--horror-red)}
-}
-.qcard::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,#6a0808,var(--horror-red),#6a0808,transparent);
-  box-shadow:0 0 20px var(--horror-red);
-}
-.qcard::after{
-  content:'';position:absolute;bottom:0;right:0;
-  width:140px;height:140px;
-  background:radial-gradient(circle,rgba(200,26,26,.15),transparent);
-  pointer-events:none;
-  filter:blur(20px);
-}
-.qnum{font-size:.65rem;color:#6a3030;letter-spacing:.3em;margin-bottom:1rem;font-family:'Cinzel',serif;text-transform:uppercase;text-shadow:0 0 10px rgba(200,0,0,.2);}
-.qtext{
-  font-family:'Crimson Text',serif;font-size:1.35rem;
-  color:var(--pale);line-height:2;margin-bottom:2rem;
-  text-shadow:0 0 5px rgba(0,0,0,.5);
-}
-
-/* ── Options ── */
-.opts{display:flex;flex-direction:column;gap:12px;}
-.opt{
-  background:rgba(8,2,10,.8);border:1.5px solid #1e0606;
-  border-radius:6px;padding:1.1rem 1.5rem;
-  color:#8a6a6a;font-family:'Noto Serif TC',serif;font-size:1rem;
-  cursor:pointer;text-align:left;
-  transition:all .3s cubic-bezier(.34,.1,.68,.55);
-  display:flex;align-items:center;gap:14px;
-  position:relative;overflow:hidden;
-}
-.opt::before{content:'';position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,rgba(200,10,10,.25),transparent);transition:width .4s;}
-.opt::after{content:'';position:absolute;inset:0;opacity:0;background:radial-gradient(circle at center,rgba(200,26,26,.1),transparent);transition:opacity .3s;pointer-events:none;}
-.opt:hover{
-  border-color:#6a1a1a;color:var(--pale);
-  transform:translateX(8px);
-  box-shadow:0 0 20px rgba(200,0,0,.25),inset 0 0 10px rgba(200,0,0,.1);
-}
-.opt:hover::before{width:100%;}
-.opt:hover::after{opacity:1;}
-.opt.sel{
-  background:rgba(120,15,15,.45);
-  border-color:var(--horror-red);
-  color:var(--bone);
-  box-shadow:0 0 30px var(--horror-red),inset 0 0 20px rgba(200,0,0,.2);
-  transform:translateX(8px);
-}
-.opt.sel::before{width:100%;}
-.osym{
-  width:28px;height:28px;min-width:28px;
-  border:1.5px solid #3a1a1a;border-radius:3px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:.7rem;color:#5a2a2a;font-family:'Cinzel',serif;
-  transition:all .3s;
-  background:rgba(0,0,0,.4);
-}
-.opt.sel .osym{
-  background:var(--horror-red);
-  color:var(--bone);
-  border-color:var(--horror-red);
-  box-shadow:0 0 15px var(--horror-red),inset 0 0 8px rgba(255,255,255,.2);
-  transform:scale(1.1);
-}
-
-/* ── Nav buttons ── */
-.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:1.5rem;}
-.nbtn{
-  background:rgba(10,4,8,.6);border:1.5px solid #1e0606;
-  border-radius:4px;color:#5a3a3a;
-  font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.18em;
-  padding:.8rem 2rem;cursor:pointer;transition:all .3s;
-  text-transform:uppercase;
-  box-shadow:0 0 10px rgba(0,0,0,.4);
-}
-.nbtn:hover:not(:disabled){
-  border-color:var(--horror-red);
-  color:var(--horror-red);
-  box-shadow:0 0 20px var(--horror-red),0 0 40px rgba(200,0,0,.15);
-}
-.nbtn.pri{
-  background:rgba(120,15,15,.3);
-  border-color:var(--horror-red);
-  color:var(--horror-red);
-  box-shadow:0 0 15px var(--horror-red);
-}
-.nbtn.pri:hover{
-  background:rgba(120,15,15,.5);
-  border-color:var(--horror-red);
-  color:#fff;
-  box-shadow:0 0 30px var(--horror-red),0 0 60px rgba(200,0,0,.2);
-}
-.nbtn:disabled{opacity:.15;cursor:default;text-shadow:none;}
-
-/* ── Result card ── */
-.rcard{
-  display:none;
-  background:rgba(4,0,8,.95);border:2px solid #2a0808;
-  border-radius:8px;padding:3.5rem 2.5rem;
-  position:relative;overflow:hidden;
-  box-shadow:0 0 100px rgba(140,0,0,.3),inset 0 0 80px rgba(0,0,0,.7);
-  animation:resultAppear 0.8s cubic-bezier(.34,1.56,.64,1);
-}
-@keyframes resultAppear{
-  0%{opacity:0;transform:translateY(40px) scale(0.95);filter:blur(10px)}
-  70%{opacity:1;transform:translateY(-5px) scale(1.02)}
-  100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
-}
-.rcard::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--horror-red),transparent);
-  box-shadow:0 0 25px var(--horror-red);
-}
-.rcard::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(200,0,0,.4),transparent);
-}
-.r-icon{
-  font-size:4.5rem;display:block;text-align:center;margin-bottom:1.5rem;
-  animation:iconPulseHeavy 2s ease-in-out infinite;
-  filter:drop-shadow(0 0 25px var(--horror-red)) drop-shadow(0 0 50px rgba(200,0,0,.3));
-}
-@keyframes iconPulseHeavy{
-  0%,100%{transform:scale(1);filter:drop-shadow(0 0 25px var(--horror-red))}
-  50%{transform:scale(1.15);filter:drop-shadow(0 0 40px var(--horror-red)) drop-shadow(0 0 80px rgba(200,0,0,.3))}
-}
-.r-lbl{font-size:.7rem;color:#6a3030;letter-spacing:.35em;text-align:center;margin-bottom:.6rem;font-family:'Cinzel',serif;text-transform:uppercase;text-shadow:0 0 10px rgba(200,0,0,.2);}
-.r-type{
-  font-family:'Cinzel',serif;font-size:2rem;font-weight:700;
-  color:var(--horror-red);text-align:center;margin-bottom:.5rem;
-  text-shadow:0 0 40px var(--horror-red),0 0 20px rgba(200,0,0,.5);
-  letter-spacing:.1em;
-  animation:typeGlowHeavy 2.5s ease-in-out infinite;
-}
-@keyframes typeGlowHeavy{
-  0%,100%{text-shadow:0 0 40px var(--horror-red),0 0 20px rgba(200,0,0,.5)}
-  50%{text-shadow:0 0 60px var(--horror-red),0 0 30px rgba(200,0,0,.7),0 0 100px rgba(200,0,0,.2)}
-}
-.r-name{font-family:'Crimson Text',serif;font-size:1.3rem;color:var(--bone);text-align:center;font-style:italic;margin-bottom:.5rem;text-shadow:0 0 5px rgba(0,0,0,.5);}
-.r-divider{width:80px;height:1px;background:linear-gradient(90deg,transparent,#3a0808,transparent);margin:2rem auto;box-shadow:0 0 15px rgba(200,0,0,.2);}
-
-/* ── Score bar ── */
-.score-wrap{margin:2rem 0;}
-.score-lbl{display:flex;justify-content:space-between;font-size:.68rem;color:#6a3030;letter-spacing:.15em;margin-bottom:.6rem;text-transform:uppercase;}
-.score-lbl .hi{color:var(--horror-red);font-weight:700;text-shadow:0 0 10px var(--horror-red);}
-.score-bg{width:100%;height:8px;background:#0a0204;border-radius:4px;overflow:hidden;box-shadow:inset 0 0 10px rgba(0,0,0,.8);}
-.score-fill{
-  height:100%;border-radius:4px;
-  transition:width 1.6s cubic-bezier(.22,1,.36,1) .6s;
-  background:linear-gradient(90deg,#4a0404,var(--horror-red),var(--horror-red),var(--ember),#ff6b35);
-  box-shadow:0 0 15px var(--horror-red),inset 0 0 8px rgba(255,255,255,.15);
-}
-
-/* ── Result description ── */
-.r-desc{
-  font-family:'Crimson Text',serif;font-size:1.15rem;
-  color:#9a8a7a;line-height:2;
-  border-left:2px solid #3a0808;padding-left:1.5rem;
-  margin-bottom:2rem;
-  text-shadow:0 0 5px rgba(0,0,0,.5);
-}
-.r-tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:2rem;}
-.r-tag{
-  background:rgba(140,15,15,.18);border:1px solid #3a0808;
-  border-radius:4px;padding:6px 16px;
-  font-size:.85rem;color:#8a5a5a;font-family:'Cinzel',serif;
-  letter-spacing:.1em;
-  transition:all .3s;
-  text-shadow:0 0 5px rgba(0,0,0,.3);
-}
-.r-tag:hover{
-  border-color:var(--horror-red);
-  background:rgba(200,15,15,.2);
-  color:var(--horror-red);
-  box-shadow:0 0 15px rgba(200,0,0,.2);
-}
-.r-advice{
-  background:rgba(6,0,8,.9);border:1.5px solid #2a0808;
-  border-radius:6px;padding:1.6rem 1.8rem;margin-bottom:2rem;
-  box-shadow:0 0 30px rgba(140,0,0,.15);
-}
-.r-advice-lbl{font-size:.65rem;color:#6a3030;letter-spacing:.3em;margin-bottom:.8rem;font-family:'Cinzel',serif;text-transform:uppercase;text-shadow:0 0 8px rgba(200,0,0,.15);}
-.r-advice-text{font-family:'Crimson Text',serif;font-size:1.05rem;color:#9a8a7a;line-height:1.9;font-style:italic;text-shadow:0 0 5px rgba(0,0,0,.5);}
-.restart-btn{
-  background:rgba(80,10,10,.2);border:1.5px solid #2a0808;
-  border-radius:4px;color:#6a3a3a;
-  font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.18em;
-  padding:.9rem 2.5rem;cursor:pointer;transition:all .3s;
-  display:block;margin:0 auto;
-  text-transform:uppercase;
-  box-shadow:0 0 15px rgba(0,0,0,.4);
-}
-.restart-btn:hover{
-  border-color:var(--horror-red);
-  color:var(--horror-red);
-  background:rgba(120,15,15,.3);
-  box-shadow:0 0 30px var(--horror-red),0 0 50px rgba(200,0,0,.15);
-}
-
-/* ── Text flicker ── */
-.flicker{animation:textFlickerHeavy 4.5s ease-in-out infinite;}
-@keyframes textFlickerHeavy{
-  0%,100%{opacity:1;text-shadow:0 0 10px rgba(200,0,0,.3)}
-  82%{opacity:1;text-shadow:0 0 10px rgba(200,0,0,.3)}
-  83%{opacity:.3;text-shadow:0 0 5px rgba(200,0,0,.1)}
-  85%{opacity:1;text-shadow:0 0 15px rgba(200,0,0,.4)}
-  87%{opacity:.4;text-shadow:0 0 8px rgba(200,0,0,.2)}
-  89%{opacity:1;text-shadow:0 0 10px rgba(200,0,0,.3)}
-}
-
-/* ── Heartbeat ── */
-.heartbeat{animation:heartbeatHeavy 2s ease-in-out infinite;}
-@keyframes heartbeatHeavy{
-  0%,100%{transform:scale(1)}
-  12%{transform:scale(1.1)}
-  24%{transform:scale(1)}
-  36%{transform:scale(1.08)}
-  60%{transform:scale(1)}
-}
-
-/* ── Horror shake ── */
-.horror-shake{animation:horrorShake 0.3s ease-in-out;}
-@keyframes horrorShake{
-  0%,100%{transform:translateX(0)}
-  25%{transform:translateX(-3px)}
-  75%{transform:translateX(3px)}
-}
-
-/* ── Mobile ── */
-@media(max-width:480px){
-  .site-title{font-size:1.8rem;}
-  .qtext{font-size:1.1rem;}
-  .wrap{padding:2rem 1rem 6rem;}
-  .r-type{font-size:1.5rem;}
-}
+.quiz-section.active{display:block;}
+.qcard{background:rgba(8,4,12,.85);border:1px solid #1e0808;border-radius:8px;padding:2.5rem 2rem 2rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
+.qnum{font-size:.6rem;color:#5a2020;letter-spacing:.25em;margin-bottom:.8rem;font-family:'Cinzel',serif;}
+.qtext{font-family:'Crimson Text',serif;font-size:1.25rem;color:var(--pale);line-height:1.85;margin-bottom:1.8rem;}
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt{background:rgba(12,4,8,.7);border:1px solid #1e0606;border-radius:6px;padding:.9rem 1.2rem;color:var(--dust);font-family:'Noto Serif TC',serif;font-size:.97rem;cursor:pointer;text-align:left;transition:all .25s;display:flex;align-items:center;gap:12px;}
+.opt:hover{border-color:#5a0a0a;color:var(--pale);transform:translateX(5px);}
+.opt.sel{background:rgba(80,10,10,.35);border-color:var(--crimson);color:var(--bone);}
+.osym{width:24px;height:24px;min-width:24px;border:1px solid #2a1010;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#4a2020;font-family:'Cinzel',serif;}
+.opt.sel .osym{background:var(--blood);color:var(--bone);border-color:var(--crimson);}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:.8rem;}
+.nbtn{background:transparent;border:1px solid #1e0606;border-radius:4px;color:#3a1010;font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.15em;padding:.65rem 1.6rem;cursor:pointer;transition:all .25s;}
+.nbtn:hover:not(:disabled){border-color:var(--blood);color:var(--crimson);}
+.nbtn.pri{background:rgba(80,10,10,.2);border-color:var(--blood);color:var(--crimson);}
+.nbtn.pri:hover{background:rgba(80,10,10,.4);border-color:var(--scarlet);}
+.nbtn:disabled{opacity:.2;cursor:default;}
+.rcard{display:none;background:rgba(6,2,10,.92);border:1px solid #1e0808;border-radius:8px;padding:3rem 2rem;position:relative;overflow:hidden;box-shadow:0 0 80px rgba(100,0,0,.2);}
+.r-icon{font-size:3.5rem;display:block;text-align:center;margin-bottom:1.5rem;}
+.r-lbl{font-size:.6rem;color:#4a1a1a;letter-spacing:.3em;text-align:center;margin-bottom:.5rem;font-family:'Cinzel',serif;}
+.r-type{font-family:'Cinzel',serif;font-size:1.7rem;font-weight:700;color:var(--scarlet);text-align:center;margin-bottom:.4rem;text-shadow:0 0 30px var(--glow-red);}
+.r-name{font-family:'Crimson Text',serif;font-size:1.15rem;color:var(--bone);text-align:center;font-style:italic;margin-bottom:.3rem;}
+.r-divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,#2a0808,transparent);margin:1.5rem auto;}
+.r-desc{font-family:'Crimson Text',serif;font-size:1.08rem;color:var(--ash);line-height:1.95;border-left:1px solid #2a0808;padding-left:1.3rem;margin-bottom:1.5rem;}
+.r-tags{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:1.5rem;}
+.r-tag{background:rgba(80,10,10,.12);border:1px solid #2a0808;border-radius:3px;padding:4px 14px;font-size:.8rem;color:#7a4040;font-family:'Cinzel',serif;}
+.r-advice{background:rgba(10,4,6,.8);border:1px solid #1e0808;border-radius:6px;padding:1.3rem 1.5rem;margin-bottom:1.5rem;}
+.r-advice-lbl{font-size:.58rem;color:#4a1a1a;letter-spacing:.25em;margin-bottom:.6rem;font-family:'Cinzel',serif;}
+.r-advice-text{font-family:'Crimson Text',serif;font-size:1rem;color:var(--ash);line-height:1.75;font-style:italic;}
+.restart-btn{background:transparent;border:1px solid #1e0808;border-radius:4px;color:#3a1010;font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.15em;padding:.7rem 2rem;cursor:pointer;transition:all .25s;display:block;margin:0 auto;}
+.restart-btn:hover{border-color:var(--blood);color:var(--crimson);box-shadow:0 0 20px rgba(100,0,0,.2);}
 </style>
 </head>
 <body>
-
-<!-- Vignette overlay -->
-<div class="vignette"></div>
-
-<!-- Ambient veins -->
-<div class="veins">
-  <div class="vein" style="left:0;top:20%;width:2.5px;height:35vh;--d:11s;--delay:0s;transform:rotate(10deg);"></div>
-  <div class="vein" style="right:0;top:40%;width:2.5px;height:28vh;--d:14s;--delay:3s;transform:rotate(-8deg);"></div>
-  <div class="vein" style="left:5%;top:0;width:2.5px;height:22vh;--d:9s;--delay:1s;transform:rotate(5deg);"></div>
-  <div class="vein" style="right:8%;top:0;width:2.5px;height:20vh;--d:12s;--delay:2s;transform:rotate(-5deg);"></div>
-  <div class="vein" style="left:50%;top:10%;width:2px;height:25vh;--d:13s;--delay:4s;transform:rotate(0deg);"></div>
-</div>
-
-<!-- Floating blood particles -->
-<div class="particles">
-  <div class="particle" style="left:15%;top:60%;width:100px;height:100px;--pd:14s;--pdelay:0s;"></div>
-  <div class="particle" style="left:75%;top:40%;width:80px;height:80px;--pd:11s;--pdelay:2s;"></div>
-  <div class="particle" style="left:45%;top:70%;width:120px;height:120px;--pd:16s;--pdelay:4s;"></div>
-  <div class="particle" style="left:25%;top:20%;width:60px;height:60px;--pd:12s;--pdelay:1s;"></div>
-</div>
-
-<!-- Corner SVG drips -->
-<div class="drip-corner tl">
-  <svg width="120" height="160" viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 0 Q25 0 25 25 L28 100 Q28 120 22 130 L18 160 Q16 150 14 130 L10 25 Q10 0 0 0Z" fill="#5a0808" opacity=".6"/>
-    <path d="M40 0 Q60 0 60 20 L65 80 Q65 95 60 105 L58 130 Q56 115 54 105 L50 20 Q50 0 40 0Z" fill="#3a0404" opacity=".5"/>
-    <path d="M75 5 Q85 5 85 18 L87 60 Q87 70 85 75 L84 90 Q83 80 82 75 L80 18 Q80 5 75 5Z" fill="#2a0202" opacity=".4"/>
-  </svg>
-</div>
-<div class="drip-corner tr">
-  <svg width="120" height="160" viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 0 Q25 0 25 25 L28 100 Q28 120 22 130 L18 160 Q16 150 14 130 L10 25 Q10 0 0 0Z" fill="#5a0808" opacity=".6"/>
-    <path d="M40 0 Q60 0 60 20 L65 80 Q65 95 60 105 L58 130 Q56 115 54 105 L50 20 Q50 0 40 0Z" fill="#3a0404" opacity=".5"/>
-    <path d="M75 5 Q85 5 85 18 L87 60 Q87 70 85 75 L84 90 Q83 80 82 75 L80 18 Q80 5 75 5Z" fill="#2a0202" opacity=".4"/>
-  </svg>
-</div>
-
 <div class="wrap">
-
-  <!-- Header (always visible) -->
   <header class="site-header">
     <span class="horror-eye">🩸</span>
     <h1 class="site-title">深淵<em>回聲</em></h1>
@@ -548,7 +74,6 @@ body::after{
     <p class="site-sub">內心焦慮深度測驗 · 你的恐懼是什麼形狀的？</p>
   </header>
 
-  <!-- ══ Landing ══ -->
   <section id="landing" class="quiz-section active">
     <div class="lore-box">
       <p class="lore-text">
@@ -556,15 +81,13 @@ body::after{
         它在你睡不著的夜晚低語，<br>
         在人群中讓你感到格外孤獨，<br>
         在每個「我還好」背後，無聲嘶吼。<br><br>
-        它有一個名字——但你一直不敢說。<br>
         這個測驗不會讓它消失——<br>
-        但它會幫你<em>看清它的臉</em>，<br>
-        和它告訴你，<em>你不是一個人</em>。
+        但它會幫你<em>看清它的臉</em>。
       </p>
     </div>
     <div class="warning-row">
       <div class="warning-dot"></div>
-      <span>共 10 題 · 無對錯之分 · 請憑本能回答 · 準備好凝視了嗎？</span>
+      <span>共 10 題 · 無對錯之分 · 請憑本能回答</span>
       <div class="warning-dot"></div>
     </div>
     <div style="text-align:center">
@@ -572,16 +95,7 @@ body::after{
     </div>
   </section>
 
-  <!-- ══ Quiz ══ -->
   <section id="quiz-section" class="quiz-section">
-    <div class="topbar" id="topbar">
-      <div class="topbar-inner">
-        <button class="topbar-home" onclick="goHome()">← 返回</button>
-        <span class="topbar-title">深淵回聲</span>
-      </div>
-    </div>
-    <div class="step-lbl flicker" id="step-lbl">問題 1 / 10</div>
-    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:10%"></div></div>
     <div class="qcard" id="qcard">
       <div class="qnum" id="qnum">QUESTION Ⅰ</div>
       <div class="qtext" id="qtext"></div>
@@ -592,15 +106,11 @@ body::after{
       <button class="nbtn pri" id="nbtn" onclick="nextQ()">繼續 →</button>
     </div>
     <div class="rcard" id="rcard">
-      <span class="r-icon heartbeat" id="r-icon">🩸</span>
+      <span class="r-icon" id="r-icon">🩸</span>
       <div class="r-lbl">你的焦慮類型</div>
-      <div class="r-type flicker" id="r-type"></div>
+      <div class="r-type" id="r-type"></div>
       <div class="r-name" id="r-name"></div>
       <div class="r-divider"></div>
-      <div class="score-wrap">
-        <div class="score-lbl"><span>焦慮強度</span><span class="hi" id="r-score-pct">—</span></div>
-        <div class="score-bg"><div class="score-fill" id="r-score-bar" style="width:0%"></div></div>
-      </div>
       <div class="r-desc" id="r-desc"></div>
       <div class="r-tags" id="r-tags"></div>
       <div class="r-advice">
@@ -610,293 +120,10 @@ body::after{
       <button class="restart-btn" onclick="restartQuiz()">再度凝視深淵</button>
     </div>
   </section>
-
 </div>
 
 <script>
-// ══ Sound Control ══
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-// Create subtle horror ambient sound (sine wave with modulation)
-function playHorrorTone(frequency = 40, duration = 0.3) {
-  try {
-    const now = audioContext.currentTime;
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
-    
-    osc.frequency.value = frequency;
-    osc.type = 'sine';
-    
-    gain.gain.setValueAtTime(0.02, now);
-    gain.gain.linearRampToValueAtTime(0, now + duration);
-    
-    osc.start(now);
-    osc.stop(now + duration);
-  } catch(e) {}
-}
-
-// Click sound effect
-function playClickSound() {
-  try {
-    const now = audioContext.currentTime;
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
-    
-    osc.frequency.setValueAtTime(200, now);
-    osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
-    
-    gain.gain.setValueAtTime(0.03, now);
-    gain.gain.linearRampToValueAtTime(0, now + 0.15);
-    
-    osc.start(now);
-    osc.stop(now + 0.15);
-  } catch(e) {}
-}
-
-// ══ Question Data ══
-const QS = [
-  {
-    q:"深夜突然清醒，你腦中第一個出現的念頭是……",
-    opts:[
-      {t:"我明天還有好多事沒做完",v:"control"},
-      {t:"不知道那個人有沒有在生我的氣",v:"attach"},
-      {t:"什麼都沒有，只是一種說不清的不安",v:"exist"},
-      {t:"我這樣下去到底算什麼",v:"worth"},
-    ]
-  },
-  {
-    q:"有人沒有回你訊息，過了兩個小時，你的狀態是……",
-    opts:[
-      {t:"開始想是不是自己說錯了什麼",v:"attach"},
-      {t:"沒差，反正我也在忙",v:"detach"},
-      {t:"隱約覺得自己又被拋棄了",v:"attach"},
-      {t:"在腦中把所有可能的原因排列一遍",v:"control"},
-    ]
-  },
-  {
-    q:"有人稱讚你，你的第一反應是……",
-    opts:[
-      {t:"開始懷疑他是不是有什麼目的",v:"worth"},
-      {t:"謝謝，但心裡覺得自己不太配",v:"worth"},
-      {t:"接受，但等著看後來會不會被推翻",v:"attach"},
-      {t:"無感，反正一個稱讚說明不了什麼",v:"detach"},
-    ]
-  },
-  {
-    q:"你在一個派對或聚會上，人很多，你通常……",
-    opts:[
-      {t:"找一個角落讓自己看起來很忙",v:"exist"},
-      {t:"努力融入，但其實一直在觀察別人怎麼看我",v:"attach"},
-      {t:"很快抽離，回家後才覺得可以呼吸",v:"exist"},
-      {t:"想離開但覺得離開了別人會有想法",v:"attach"},
-    ]
-  },
-  {
-    q:"想像一個你非常在意的人突然說「我們需要談談」你的身體反應是……",
-    opts:[
-      {t:"胃往下沉，開始默默列出自己的罪狀",v:"worth"},
-      {t:"心跳加速，腦中瞬間預演所有最壞的情況",v:"control"},
-      {t:"感覺有什麼東西要碎掉了",v:"attach"},
-      {t:"表面鎮定，內心是一片白色的空洞",v:"detach"},
-    ]
-  },
-  {
-    q:"當你獨處的時候，你最常感受到的是……",
-    opts:[
-      {t:"一種莫名的空虛，不知道自己在等什麼",v:"exist"},
-      {t:"如釋重負，終於不用再表演了",v:"detach"},
-      {t:"腦子停不下來，想東想西",v:"control"},
-      {t:"隱約的恐懼，不知道恐懼什麼",v:"exist"},
-    ]
-  },
-  {
-    q:"你做了一個重要的決定，但朋友提出了反對意見，你……",
-    opts:[
-      {t:"開始動搖，覺得也許自己真的錯了",v:"worth"},
-      {t:"表面接受，內心還是照原計畫走",v:"detach"},
-      {t:"一直想那句話，反覆咀嚼到天亮",v:"control"},
-      {t:"試著解釋，但越解釋越覺得沒有人真的懂我",v:"exist"},
-    ]
-  },
-  {
-    q:"最能描述你對「未來」的感覺的畫面是……",
-    opts:[
-      {t:"一條霧裡的路，走不快也不敢停",v:"exist"},
-      {t:"一份不斷在更新的待辦清單，永遠清不完",v:"control"},
-      {t:"一個你追著但靠近不了的背影",v:"attach"},
-      {t:"一個空白的房間，你站在裡面，什麼都不是",v:"worth"},
-    ]
-  },
-  {
-    q:"你最難說出口的一句話是……",
-    opts:[
-      {t:"「我需要幫忙。」",v:"worth"},
-      {t:"「我很害怕。」",v:"detach"},
-      {t:"「請不要離開我。」",v:"attach"},
-      {t:"「我不知道自己是誰。」",v:"exist"},
-    ]
-  },
-  {
-    q:"凌晨三點，你在想的是……",
-    opts:[
-      {t:"那件事我到底做對了嗎，我還能補救嗎",v:"control"},
-      {t:"有沒有人真的在乎我，還是我只是方便的存在",v:"attach"},
-      {t:"我到底為什麼活著，這樣活著有什麼意思",v:"exist"},
-      {t:"我是不是從來都不夠好，一直在勉強撐著",v:"worth"},
-    ]
-  },
-];
-
-// ══ Result Types ══
-const TYPES = {
-  control:{
-    label:"掌控型焦慮",name:"你是那個永遠在備份的人",
-    icon:"⚙️",
-    desc:"你的焦慮長得像一張永遠寫不完的清單。你需要把事情算清楚、說清楚、排好，不然那種「有什麼要出事了」的感覺就不會走。你擅長規劃，其實是因為不確定讓你窒息。你不是控制狂——你只是太害怕事情脫軌。你的頭腦永不休息，因為它把思考當作唯一的求生方式。",
-    tags:["過度思慮","完美主義傾向","難以放鬆","對意外極度敏感","強迫性思考"],
-    advice:"你的大腦從不休息，因為它以為只要想得夠周全，就能阻止任何壞事發生。但你保護不了所有事——沒有人能。你只能學著相信，就算失控，你也能撐過去。有時候，放手反而是最大的掌握。"
-  },
-  attach:{
-    label:"依附型焦慮",name:"你把別人的回應當作呼吸",
-    icon:"🩷",
-    desc:"對你來說，關係是氧氣，也是刀。你渴望靠近，但一靠近就開始怕失去。你分析別人的表情、語氣、回訊速度，試圖在裡面找到「你還是安全的」的證據。你不是黏人——你是在用盡全力，不讓自己再被丟下。每一次沉默都像是背棄，每一次遲到都像是拋棄。你活在別人的情緒裡，忘了自己還有呼吸。",
-    tags:["害怕被拋棄","高度依附","敏感於情緒變化","過度解讀訊號","關係成癮"],
-    advice:"你花了太多力氣去確認別人是否還在。試著停下來問自己：就算他們離開，你還在嗎？答案是肯定的。你一直都在。你不需要用完美來換取愛——你值得被愛，就是因為你活著。"
-  },
-  exist:{
-    label:"存在型焦慮",name:"你在霧裡走路，不知道去哪",
-    icon:"🌫️",
-    desc:"你的焦慮沒有具體的臉，它是一種漂浮感——不知道自己為什麼在這裡，不知道下一步是什麼，不知道這樣活著算不算有意義。你不是在逃避，你是在一片霧裡試著找到地面。你有時候會看著自己的手，覺得有點陌生。這種孤獨，很少人能真的理解。你的存在本身就像一個未完成的句子。",
-    tags:["意義感缺失","虛無感","與現實的疏離","對未來的茫然","去個人化體驗"],
-    advice:"霧不會永遠這麼濃。你不需要馬上看清楚整條路——只需要看到腳下的下一步。意義不是找到的，是一點一點活出來的。有時候，就是活著本身，就已經足夠了。"
-  },
-  worth:{
-    label:"自我價值型焦慮",name:"你是最嚴苛的那個審判者",
-    icon:"🪞",
-    desc:"無論外面的人怎麼說，你心裡那個聲音永遠更大、更毒。你不太相信自己是夠好的，所以你用更努力來換取安全感，然後還是覺得不夠。你不是真的差勁——你只是從很久以前就開始相信了一個謊言。你的內在評論者從不沉默，它24小時都在告訴你，你還不夠。",
-    tags:["低自我價值感","冒牌者症候群","渴望認可","難以接受讚美","自我否定"],
-    advice:"那個說你不夠好的聲音，不是事實——它是傷。它來自很久之前，來自某個告訴你「你不夠」的人。但現在，你可以選擇不聽。你不需要再去證明什麼了。你已經足夠了，只是還不太會相信這件事。"
-  },
-  detach:{
-    label:"解離型焦慮",name:"你把感覺鎖起來，自己找不到鑰匙",
-    icon:"🧊",
-    desc:"你看起來很冷靜，甚至有點冷漠。那是因為你很早就學會了：感覺太多，會太痛。所以你切斷了。你不是沒有感受——你是讓感受在你看不到的地方繼續燒。有時候你自己都不確定，自己到底還有沒有什麼感覺。你的冷靜是一種生存策略，但它也讓你活得有點死亡。",
-    tags:["情感麻木","高功能焦慮","與情緒的解離","過度獨立","感受遲鈍"],
-    advice:"鎖住感覺，是當時最好的選擇——它讓你活下來了。但現在，你可以試著慢慢打開。不是一次全開，一條縫也好。感覺會很痛，但它也是你還活著的證明。你值得被自己感覺到。"
-  }
-};
-
-// ── State ──
-let cur = 0;
-let answers = new Array(QS.length).fill(null);
-
-const ROMAN = ["Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ","Ⅹ"];
-
-function startQuiz(){
-  cur = 0;
-  answers = new Array(QS.length).fill(null);
-  playHorrorTone(50, 0.4);
-  document.getElementById('landing').classList.remove('active');
-  const qs = document.getElementById('quiz-section');
-  qs.classList.add('active');
-  render();
-  window.addEventListener('scroll', onScroll);
-}
-
-function onScroll(){
-  const tb = document.getElementById('topbar');
-  if(window.scrollY > 80) tb.classList.add('visible');
-  else tb.classList.remove('visible');
-}
-
-function goHome(){
-  playClickSound();
-  document.getElementById('quiz-section').classList.remove('active');
-  document.getElementById('landing').classList.add('active');
-  document.getElementById('topbar').classList.remove('visible');
-  window.removeEventListener('scroll', onScroll);
-  document.getElementById('rcard').style.display='none';
-  document.getElementById('qcard').style.display='block';
-  document.querySelector('#quiz-section .nav').style.display='flex';
-}
-
-function render(){
-  const q = QS[cur];
-  document.getElementById('step-lbl').textContent = `問題 ${cur+1} / ${QS.length}`;
-  document.getElementById('prog-fill').style.width = ((cur+1)/QS.length*100)+'%';
-  document.getElementById('qnum').textContent = `QUESTION ${ROMAN[cur]}`;
-  document.getElementById('qtext').textContent = q.q;
-  const opts = document.getElementById('opts');
-  opts.innerHTML='';
-  q.opts.forEach((o,i)=>{
-    const b = document.createElement('button');
-    b.className='opt'+(answers[cur]===i?' sel':'');
-    b.innerHTML=`<span class="osym">${ROMAN[i]}</span>${o.t}`;
-    b.onclick=()=>{ 
-      answers[cur]=i; 
-      playClickSound();
-      b.classList.add('horror-shake');
-      setTimeout(()=>b.classList.remove('horror-shake'),300);
-      render(); 
-    };
-    opts.appendChild(b);
-  });
-  document.getElementById('pbtn').disabled = cur===0;
-  document.getElementById('nbtn').textContent = cur===QS.length-1 ? '窺見深淵 →' : '繼續 →';
-}
-
-function nextQ(){
-  if(answers[cur]===null) return;
-  playClickSound();
-  if(cur < QS.length-1){ cur++; render(); }
-  else { playHorrorTone(60, 0.5); showResult(); }
-}
-function prevQ(){ if(cur>0){ cur--; playClickSound(); render(); }}
-
-function showResult(){
-  const scores = {control:0, attach:0, exist:0, worth:0, detach:0};
-  QS.forEach((q,qi)=>{
-    if(answers[qi]===null) return;
-    scores[q.opts[answers[qi]].v]++;
-  });
-  const winner = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];
-  const total = Object.values(scores).reduce((a,b)=>a+b,0);
-  const pct = Math.round(scores[winner]/total*100);
-  const r = TYPES[winner];
-
-  document.getElementById('qcard').style.display='none';
-  document.querySelector('#quiz-section .nav').style.display='none';
-  const rc = document.getElementById('rcard');
-  rc.style.display='block';
-
-  document.getElementById('r-icon').textContent = r.icon;
-  document.getElementById('r-type').textContent = r.label;
-  document.getElementById('r-name').textContent = r.name;
-  document.getElementById('r-score-pct').textContent = pct+'%';
-  document.getElementById('r-desc').textContent = r.desc;
-  document.getElementById('r-tags').innerHTML = r.tags.map(t=>`<span class="r-tag">${t}</span>`).join('');
-  document.getElementById('r-advice').textContent = r.advice;
-  
-  setTimeout(()=>{ document.getElementById('r-score-bar').style.width = pct+'%'; },100);
-  setTimeout(()=>{ playHorrorTone(45, 0.6); },800);
-}
-
-function restartQuiz(){
-  cur=0; 
-  answers=new Array(QS.length).fill(null);
-  playClickSound();
-  document.getElementById('rcard').style.display='none';
-  document.getElementById('qcard').style.display='block';
-  document.querySelector('#quiz-section .nav').style.display='flex';
-  render();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
+const QS=[{q:"深夜突然清醒，你腦中第一個出現的念頭是……",opts:[{t:"我明天還有好多事沒做完",v:"control"},{t:"不知道那個人有沒有在生我的氣",v:"attach"},{t:"什麼都沒有，只是一種說不清的不安",v:"exist"},{t:"我這樣下去到底算什麼",v:"worth"}]},{q:"有人沒有回你訊息，過了兩個小時，你的狀態是……",opts:[{t:"開始想是不是自己說錯了什麼",v:"attach"},{t:"沒差，反正我也在忙",v:"detach"},{t:"隱約覺得自己又被拋棄了",v:"attach"},{t:"在腦中把所有可能的原因排列一遍",v:"control"}]},{q:"有人稱讚你，你的第一反應是……",opts:[{t:"開始懷疑他是不是有什麼目的",v:"worth"},{t:"謝謝，但心裡覺得自己不太配",v:"worth"},{t:"接受，但等著看後來會不會被推翻",v:"attach"},{t:"無感，反正一個稱讚說明不了什麼",v:"detach"}]},{q:"你在一個派對或聚會上，人很多，你通常……",opts:[{t:"找一個角落讓自己看起來很忙",v:"exist"},{t:"努力融入，但其實一直在觀察別人怎麼看我",v:"attach"},{t:"很快抽離，回家後才覺得可以呼吸",v:"exist"},{t:"想離開但覺得離開了別人會有想法",v:"attach"}]},{q:"想像一個你非常在意的人突然說『我們需要談談』你的身體反應是……",opts:[{t:"胃往下沉，開始默默列出自己的罪狀",v:"worth"},{t:"心跳加速，腦中瞬間預演所有最壞的情況",v:"control"},{t:"感覺有什麼東西要碎掉了",v:"attach"},{t:"表面鎮定，內心是一片白色的空洞",v:"detach"}]},{q:"當你獨處的時候，你最常感受到的是……",opts:[{t:"一種莫名的空虛，不知道自己在等什麼",v:"exist"},{t:"如釋重負，終於不用再表演了",v:"detach"},{t:"腦子停不下來，想東想西",v:"control"},{t:"隱約的恐懼，不知道恐懼什麼",v:"exist"}]},{q:"你做了一個重要的決定，但朋友提出了反對意見，你……",opts:[{t:"開始動搖，覺得也許自己真的錯了",v:"worth"},{t:"表面接受，內心還是照原計畫走",v:"detach"},{t:"一直想那句話，反覆咀嚼到天亮",v:"control"},{t:"試著解釋，但越解釋越覺得沒有人真的懂我",v:"exist"}]},{q:"最能描述你對『未來』的感覺的畫面是……",opts:[{t:"一條霧裡的路，走不快也不敢停",v:"exist"},{t:"一份不斷在更新的待辦清單，永遠清不完",v:"control"},{t:"一個你追著但靠近不了的背影",v:"attach"},{t:"一個空白的房間，你站在裡面，什麼都不是",v:"worth"}]},{q:"你最難說出口的一句話是……",opts:[{t:"『我需要幫忙。』",v:"worth"},{t:"『我很害怕。』",v:"detach"},{t:"『請不要離開我。』",v:"attach"},{t:"『我不知道自己是誰。』",v:"exist"}]},{q:"凌晨三點，你在想的是……",opts:[{t:"那件事我到底做對了嗎，我還能補救嗎",v:"control"},{t:"有沒有人真的在乎我，還是我只是方便的存在",v:"attach"},{t:"我到底為什麼活著，這樣活著有什麼意思",v:"exist"},{t:"我是不是從來都不夠好，一直在勉強撐著",v:"worth"}]}];const TYPES={control:{label:"掌控型焦慮",name:"你是那個永遠在備份的人",icon:"⚙️",desc:"你的焦慮長得像一張永遠寫不完的清單。",tags:["過度思慮","完美主義傾向","難以放鬆","對意外極度敏感"],advice:"你的大腦從不休息，因為它以為只要想得夠周全，就能阻止任何壞事發生。"},attach:{label:"依附型焦慮",name:"你把別人的回應當作呼吸",icon:"🩷",desc:"對你來說，關係是氧氣，也是刀。",tags:["害怕被拋棄","高度依附","敏感於情緒變化","過度解讀訊號"],advice:"你花了太多力氣去確認別人是否還在。"},exist:{label:"存在型焦慮",name:"你在霧裡走路，不知道去哪",icon:"🌫️",desc:"你的焦慮沒有具體的臉，它是一種漂浮感。",tags:["意義感缺失","虛無感","與現實的疏離","對未來的茫然"],advice:"霧不會永遠這麼濃。"},worth:{label:"自我價值型焦慮",name:"你是最嚴苛的那個審判者",icon:"🪞",desc:"無論外面的人怎麼說，你心裡那個聲音永遠更大、更毒。",tags:["低自我價值感","冒牌者症候群","渴望認可","難以接受讚美"],advice:"那個說你不夠好的聲音，不是事實——它是傷。"},detach:{label:"解離型焦慮",name:"你把感覺鎖起來，自己找不到鑰匙",icon:"🧊",desc:"你看起來很冷靜，甚至有點冷漠。",tags:["情感麻木","高功能焦慮","與情緒的解離","過度獨立"],advice:"鎖住感覺，是當時最好的選擇——它讓你活下來了。"}};let cur=0,answers=new Array(QS.length).fill(null);const ROMAN=["Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ","Ⅹ"];function startQuiz(){cur=0;answers=new Array(QS.length).fill(null);document.getElementById('landing').classList.remove('active');document.getElementById('quiz-section').classList.add('active');render();}function render(){const q=QS[cur];document.getElementById('qnum').textContent=`QUESTION ${ROMAN[cur]}`;document.getElementById('qtext').textContent=q.q;const opts=document.getElementById('opts');opts.innerHTML='';q.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='opt'+(answers[cur]===i?' sel':'');b.innerHTML=`<span class="osym">${ROMAN[i]}</span>${o.t}`;b.onclick=()=>{answers[cur]=i;render();};opts.appendChild(b);});document.getElementById('pbtn').disabled=cur===0;document.getElementById('nbtn').textContent=cur===QS.length-1?'窺見深淵 →':'繼續 →';}function nextQ(){if(answers[cur]===null)return;if(cur<QS.length-1){cur++;render();}else showResult();}function prevQ(){if(cur>0){cur--;render();}}function showResult(){const scores={control:0,attach:0,exist:0,worth:0,detach:0};QS.forEach((q,qi)=>{if(answers[qi]===null)return;scores[q.opts[answers[qi]].v]++;});const winner=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0][0];const r=TYPES[winner];document.getElementById('qcard').style.display='none';document.querySelector('#quiz-section .nav').style.display='none';document.getElementById('rcard').style.display='block';document.getElementById('r-icon').textContent=r.icon;document.getElementById('r-type').textContent=r.label;document.getElementById('r-name').textContent=r.name;document.getElementById('r-desc').textContent=r.desc;document.getElementById('r-tags').innerHTML=r.tags.map(t=>`<span class="r-tag">${t}</span>`).join('');document.getElementById('r-advice').textContent=r.advice;}function restartQuiz(){cur=0;answers=new Array(QS.length).fill(null);document.getElementById('rcard').style.display='none';document.getElementById('qcard').style.display='block';document.querySelector('#quiz-section .nav').style.display='flex';render();window.scrollTo({top:0,behavior:'smooth'});}
 </script>
 </body>
 </html>
