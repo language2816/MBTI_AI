@@ -115,6 +115,14 @@ body::before{content:'';position:fixed;inset:0;background-image:repeating-linear
 @keyframes musicNote{from{transform:scale(1) rotate(-5deg);}to{transform:scale(1.3) rotate(5deg);}}
 #music-ctrl button:hover{border-color:var(--accent)!important;color:var(--accent)!important;}
 @media(max-width:480px){.site-title{font-size:1.5rem;}.qtext{font-size:1.02rem;}.topbar{margin:-3rem -1.5rem 1.5rem;}}
+@media(max-width:768px){
+  #blanket-mascot{
+    width:80px;
+    height:80px;
+    bottom:calc(1rem + env(safe-area-inset-bottom, 20px));
+    left:0.5rem;
+  }
+}
 </style>
 </head>
 <body>
