@@ -115,6 +115,10 @@ body::before{content:'';position:fixed;inset:0;background-image:repeating-linear
 @keyframes musicNote{from{transform:scale(1) rotate(-5deg);}to{transform:scale(1.3) rotate(5deg);}}
 #music-ctrl button:hover{border-color:var(--accent)!important;color:var(--accent)!important;}
 @media(max-width:480px){.site-title{font-size:1.5rem;}.qtext{font-size:1.02rem;}.topbar{margin:-3rem -1.5rem 1.5rem;}}
+@media(max-width:768px){
+  #blanket-mascot{width:80px;height:80px;}
+}
+#blanket-mascot.dragging{animation:none!important;opacity:.85;cursor:grabbing;}
 </style>
 </head>
 <body>
@@ -77785,18 +77789,6 @@ function bmShowFrame(idx) {
   }
 }
 
-// ══ 離開頁面停止 BGM ══
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    const audio = document.getElementById('bgm-audio');
-    if (audio) audio.pause();
-  }
-});
-window.addEventListener('pagehide', () => {
-  const audio = document.getElementById('bgm-audio');
-  if (audio) audio.pause();
-});
-
 // ══ BGM 控制 ══
 let bgmPlaying = false;
 let bgmStarted = false;
@@ -77868,6 +77860,87 @@ function updateMusicBtn() {
     label.textContent = bgmStarted ? '音樂 OFF' : '音樂';
   }
 }
+
+// ══ 離開頁面停止 BGM ══
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    const audio = document.getElementById('bgm-audio');
+    if (audio) audio.pause();
+  }
+});
+window.addEventListener('pagehide', () => {
+  const audio = document.getElementById('bgm-audio');
+  if (audio) audio.pause();
+});
+
+// ══ 棉被吉祥物拖移功能 ══
+(function(){
+  const el = document.getElementById('blanket-mascot');
+  if (!el) return;
+
+  let isDragging = false;
+  let startX, startY;
+  let moved = false;
+
+  function getPos() {
+    const rect = el.getBoundingClientRect();
+    return { left: rect.left, top: rect.top };
+  }
+
+  function startDrag(clientX, clientY) {
+    isDragging = true;
+    moved = false;
+    const pos = getPos();
+    el.style.left = pos.left + 'px';
+    el.style.top = pos.top + 'px';
+    el.style.bottom = 'auto';
+    el.style.right = 'auto';
+    startX = clientX - pos.left;
+    startY = clientY - pos.top;
+    el.classList.add('dragging');
+  }
+
+  function onMove(clientX, clientY) {
+    if (!isDragging) return;
+    moved = true;
+    let newLeft = clientX - startX;
+    let newTop = clientY - startY;
+    const w = el.offsetWidth, h = el.offsetHeight;
+    newLeft = Math.max(0, Math.min(window.innerWidth - w, newLeft));
+    newTop = Math.max(0, Math.min(window.innerHeight - h, newTop));
+    el.style.left = newLeft + 'px';
+    el.style.top = newTop + 'px';
+  }
+
+  function endDrag() {
+    if (!isDragging) return;
+    isDragging = false;
+    el.classList.remove('dragging');
+  }
+
+  el.addEventListener('mousedown', e => { startDrag(e.clientX, e.clientY); e.preventDefault(); });
+  document.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+  document.addEventListener('mouseup', e => {
+    if (isDragging && !moved) el.click();
+    endDrag();
+  });
+
+  el.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    startDrag(t.clientX, t.clientY);
+    e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    const t = e.touches[0];
+    onMove(t.clientX, t.clientY);
+    e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('touchend', e => {
+    if (isDragging && !moved) el.click();
+    endDrag();
+  });
+})();
 
 </script>
 </body>
